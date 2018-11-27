@@ -1,0 +1,20 @@
+--
+- hosts: "{{ hostname }}"
+  tasks:
+  - wait_for:
+      host: "{{hostname}}"
+      port: 22
+      timeout: 10
+    ignore_errors: true
+    delegate_to: localhost
+    register: is_linux
+
+  - set_fact:
+      ansible_connection: ssh
+      ansible_port: 22
+    when: is_linux.state == "started"
+    ignore_errors: yes
+    register: lin1 
+
+  - debug: msg="Linux Machines Are Available"
+    when: lin1 | success
