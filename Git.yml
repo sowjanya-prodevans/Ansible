@@ -1,0 +1,32 @@
+---
+- hosts: "{{hostselect}}"
+  become: true
+  tasks:
+  - block:
+    - name: install git on Linux
+      yum: name=git state=latest
+      when: '"git" in software'
+  
+    - name: Download Xamp
+      command: wget http://downloads.sourceforge.net/project/xampp/XAMPP%20Linux/1.8.3/xampp-linux-x64-1.8.3-3-installer.run
+      when: '"xamp" in software'
+    - name: change permission
+      command: chmod +x xampp-linux-x64-1.8.3-3-installer.run
+      when: '"xamp" in software'
+
+    - name: install Xamp
+      command: ./xampp-linux-x64-1.8.3-3-installer.run
+      when: '"xamp" in software'
+    - name: change configuration
+      replace: path=/opt/lampp/etc/extra/httpd-xampp.conf regexp="Require local" replace="Require all granted"
+      when: '"xamp" in software'
+
+    - name: restart apache
+      command: /opt/lampp/lampp restart
+      when: '"xamp" in software'
+
+    - name: install FTP on linux
+      yum: name=vsftpd state=latest
+      when: '"ftp" in software'
+
+    when: '"linux" in os_type'
