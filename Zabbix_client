@@ -1,0 +1,17 @@
+---
+- hosts: all
+  tasks:
+  - name: Install net-snmp  package
+    yum: name=net-snmp state=present
+  - name: Install net-snmp-utils Package
+    yum: name=net-snmp-utils state=present
+  - name: Add some Lines in the snmpd config file
+    lineinfile:
+      path: /etc/snmp/snmpd.conf
+      line: "{{item.line}}"
+    with_items:
+      - { line: 'rocommunity {{ ip }}' }
+      - { line: 'sysLocation {{ ip }}' }
+      - { line: 'sysContact Master {{ ip }} hostname@domain.com' }
+  - name: Srart the Service
+    service: name=snmpd state=started enabled=yes
