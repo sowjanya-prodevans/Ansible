@@ -1,0 +1,13 @@
+---
+- hosts: 127.0.0.1
+  connection: local
+  tasks:
+  - name: Create host groups
+    local_action:
+      module: zabbix_group
+      server_url: http://52.172.210.250/zabbix
+      login_user: admin
+      login_password: "{{password}}"
+      state: "{{state}}"
+      host_groups:
+      - "{{hostgroup}}"
