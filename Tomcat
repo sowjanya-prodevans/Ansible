@@ -1,0 +1,12 @@
+---
+- hosts: all
+  tasks:
+  - name: Install tomcat application
+    yum: name=tomcat state=latest
+  - name: Install tomcat admin packages
+    yum: name={{item}} state=latest
+    with_items:
+      - tomcat-webapps
+      - tomcat-admin-webapps
+  - name: Start and enable the service
+service: name=tomcat state=started enabled=yes
