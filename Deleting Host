@@ -1,0 +1,18 @@
+---
+- hosts: all
+  become: yes
+  tasks:
+  - name: Delete Host in Zabbix Server
+    zabbix_host: 
+      server_url: http://52.172.210.250/zabbix/
+      login_user: admin
+      login_password: zabbix
+      host_name: "{{ hostname }}" 
+      status: enabled
+      state: absent
+
+  - name: Slack Notification For deleting Host in Zabbix
+    slack:
+      token: T5P0QEGFQ/B6H0FG96U/yKczessxOtbB31VGv2VWkncE
+      domain: https://prodevans-forge.slack.com
+      msg: "{{ hostname }} is deleted from Zabbix Server "
