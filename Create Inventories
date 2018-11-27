@@ -1,0 +1,10 @@
+- name: Create inventory
+  hosts: 52.172.210.134
+  tasks:
+  - name: provide credentials
+    command: tower-cli config host 52.172.210.134
+    command: tower-cli config username admin
+    command: tower-cli config password Pr0dev@ns
+
+  - name: command to create inventory
+    command: tower-cli inventory create --name="{{inventory_name}}" --description="{{description}}" --organization="{{organization}}"  
