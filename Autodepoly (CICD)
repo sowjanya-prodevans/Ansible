@@ -1,0 +1,66 @@
+---
+- hosts: all
+  tasks:
+  - name: Add Jenkins key to the VM
+    copy:
+      content: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDKzBOMrKAehT2LYhdo/w3NhACFagFtUBd+7pBPY8vv2I+1Ey1pQppeLEEh6suNyKPPAZGyNwnFELGyWb1aS6gbu89Mt5+85OnV7XDVuBPAfS+Q4IImXuONGirq0USeuVEu0beBhNvH3SzEndagXhDanYN1sVNbTGP/IrtTl30sowxEvQFfnNGCawLWwkn10+uCouYp9uhpw/cNKsnYnPFdgOEN2xMEhoJjrTOdkbD6o7165bs/O4G0jN4vsI6dgnv01W3YFT4P0rDULdM8muGw0BAYJNNiMzu3K78jEiQVHKdPm5VgxzZ59e4StZRh9aZEafbQvj1c4zTz2j0t0j9f jenkins@Forge-CICDMaster001
+      ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQChUlevaetQUGqi5unCmF1fMsOwOUQ8hq18ginTUreSYSYYTUD57mwt8jdKK+F5lD7LLqKTxMii4PZkIq+77OP7nnFgJud/S9vtXon6YKgUIyIg+4iHLlhpgta7/CS2kY3oTgIAc45Rzzc31O5u9uxnPciLPzFGzM/amy0C/mULSHMVSZI7NJSvB1pOg2qveYMr4RfB9VpbcIyDpxKmhgn6EZwXk7JksvDe1bvag036Yse0cd9cdOjQdOjgWbdFJj5w5ZwGiq6vyj0ruGZmzPM70+vqArEmKG0V6SPpMPRIu98ghZIheEMiyV88dz3AHQ2lEIcqIP+CZgoxsUyoEqUJ devopsuser@Forge-AnsibleTower001"
+      dest: /home/azureuser/.ssh/authorized_keys
+    tags:
+      - common
+  - name: Create .ssh directory
+    file:
+      path: /root/.ssh
+      state: directory
+    tags:
+      - common
+  
+  - name: Add Jenkins key to root user of the VM
+    copy:
+      content: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDKzBOMrKAehT2LYhdo/w3NhACFagFtUBd+7pBPY8vv2I+1Ey1pQppeLEEh6suNyKPPAZGyNwnFELGyWb1aS6gbu89Mt5+85OnV7XDVuBPAfS+Q4IImXuONGirq0USeuVEu0beBhNvH3SzEndagXhDanYN1sVNbTGP/IrtTl30sowxEvQFfnNGCawLWwkn10+uCouYp9uhpw/cNKsnYnPFdgOEN2xMEhoJjrTOdkbD6o7165bs/O4G0jN4vsI6dgnv01W3YFT4P0rDULdM8muGw0BAYJNNiMzu3K78jEiQVHKdPm5VgxzZ59e4StZRh9aZEafbQvj1c4zTz2j0t0j9f jenkins@Forge-CICDMaster001
+      ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQChUlevaetQUGqi5unCmF1fMsOwOUQ8hq18ginTUreSYSYYTUD57mwt8jdKK+F5lD7LLqKTxMii4PZkIq+77OP7nnFgJud/S9vtXon6YKgUIyIg+4iHLlhpgta7/CS2kY3oTgIAc45Rzzc31O5u9uxnPciLPzFGzM/amy0C/mULSHMVSZI7NJSvB1pOg2qveYMr4RfB9VpbcIyDpxKmhgn6EZwXk7JksvDe1bvag036Yse0cd9cdOjQdOjgWbdFJj5w5ZwGiq6vyj0ruGZmzPM70+vqArEmKG0V6SPpMPRIu98ghZIheEMiyV88dz3AHQ2lEIcqIP+CZgoxsUyoEqUJ devopsuser@Forge-AnsibleTower001"
+      dest: /root/.ssh/authorized_keys
+    tags:
+      - common
+  
+  - name: Adding sudo privileges azureuser
+    lineinfile:
+      dest: /etc/sudoers.d/azureuser
+      state: present
+      create: yes
+      line: "azureuser ALL=(ALL) NOPASSWD: ALL"
+    tags:
+      - common
+  
+  - name: Remove waagent file
+    file:
+      path: /etc/sudoers.d/waagent
+      state: absent  
+    tags:
+      - common
+
+  - name: Change tomcat port for Dev
+    lineinfile:
+       path: /etc/tomcat/server.xml
+       regexp: '<Connector port="8080" protocol="HTTP/1.1"'
+       line: '<Connector port="8081" protocol="HTTP/1.1"'
+    tags:
+       - dev
+    notify:
+       - restart tomcat
+    
+  - name: Change tomcat port for Stage
+    lineinfile:
+       path: /etc/tomcat/server.xml
+       regexp: '<Connector port="8080" protocol="HTTP/1.1"'
+       line: '<Connector port="8082" protocol="HTTP/1.1"'
+    tags: stage
+    notify:
+       - restart tomcat
+     
+  handlers:
+    - name: restart tomcat
+      service:
+        name: tomcat
+        state: restarted
+
