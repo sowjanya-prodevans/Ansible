@@ -1,0 +1,32 @@
+---
+- name: To deploy PHP project on Server.
+  hosts: 40.76.63.49 
+  remote_user: root
+  become: true
+#  vars:
+#  - version
+#  vars_prompt:
+#  - name: version
+#    prompt: Enter the Version
+#    private: no
+  tasks:
+  - name: To copy the file from artifactory.
+    get_url:
+       url: http://52.172.211.74:8081/artifactory/php-local/YouthInc-{{ version }}.tar.gz
+       url_username: admin
+       url_password: Pr0dev@ns
+       dest: /opt/lampp/htdocs/
+  - name: Stop Xampp
+    shell: /opt/lampp/lampp stop
+  - name: remove existing directory
+    shell: rm -rf /opt/lampp/htdocs/YouthInc
+  - name: untar the file
+    shell: tar -xvzf /opt/lampp/htdocs/YouthInc-{{ version }}.tar.gz -C /opt/lampp/htdocs/
+  - name: Rename extract file to StudentInformationProject
+    shell: mv /opt/lampp/htdocs/workspace /opt/lampp/htdocs/YouthInc
+  - name: Give permission
+    shell: chmod -R 777 /opt/lampp/htdocs/YouthInc
+  - name: rm tar file
+    shell: rm -rf /opt/lampp/htdocs/YouthInc-{{ version }}.tar.gz
+  - name: Start Xampp
+    shell: /opt/lampp/lampp start
