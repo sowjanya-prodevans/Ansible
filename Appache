@@ -1,0 +1,14 @@
+---
+- hosts: all
+  remote_user: root
+  tasks:
+    - name: install httpd service on my machine
+      yum: name=httpd state=latest   
+    - name: adding content ussinf lineinfile module
+      copy:
+        dest: /var/www/html/index.html
+        content: "Hello Welcome to Prodevans"
+    - name: start httpd service
+      service: name=httpd state=started enabled=yes
+    - name: add the firewall service
+firewalld: service=http state=enabled permanent=true immediate=yes
