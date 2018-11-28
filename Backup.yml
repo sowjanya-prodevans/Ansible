@@ -5,3 +5,7 @@
 
 
 default location: /opt/dims/backups/
+Tower Backup:
+•	-b Perform a database backup rather than an installation.
+•	-r BACKUP_FILE Perform a database restore rather than an installation.
+
