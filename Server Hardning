@@ -1,0 +1,12 @@
+It is process of enhancing server security. in a much more secure server operating environment
+
+
+1.	Disable direct root logins. Switch to root from a lower level account only when necessary.
+2.	Do not permit empty passwords.
+3.	User Accounts should have very strong passwords
+4.	Use Data Encryption for your Communications
+5.	Minimize unnecessary software on your servers.
+6.	Maintain server logs; mirror logs to a separate log server
+7.	Maintain proper backups
+8.	Disable Unwanted SUID and SGID Binaries
+9.	Selinux:  (When using Linux, SELinux should be considered. Linux server hardening is a primary focus for the web hosting industry, however in web hosting SELinux is probably not a good option as it often causes issues when the server is used for web hosting purposes.)
