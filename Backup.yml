@@ -1,0 +1,7 @@
+- name: Downloading backup files from remote machine
+  command: scp -i {{ansible_ssh_private_key_file}} {{remote_user}}@{{host}}:/backup/* {{backup_folder}}
+  delegate_to: 127.0.0.1
+
+
+
+default location: /opt/dims/backups/
